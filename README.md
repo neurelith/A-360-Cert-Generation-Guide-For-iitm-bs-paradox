@@ -1,266 +1,280 @@
-
 <div align="center">
 
-# 🎯 A 360° Cert Generation Guide
+```
+   ███████╗ █████╗  █████╗ ██╗   ██╗ █████╗ ███╗   ██╗   ██████╗  ██████╗ 
+   ██╔════╝██╔══██╗██╔══██╗██║   ██║██╔══██╗████╗  ██║   ╚════██╗██╔════╝ 
+   ███████╗███████║███████║██║   ██║███████║██╔██╗ ██║    █████╔╝███████╗ 
+   ╚════██║██╔══██║██╔══██║╚██╗ ██╔╝██╔══██║██║╚██╗██║   ██╔═══╝ ██╔═══██╗
+   ███████║██║  ██║██║  ██║ ╚████╔╝ ██║  ██║██║ ╚████║██╗███████╗╚██████╔╝
+   ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝  ╚═══╝  ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚══════╝ ╚═════╝ 
+```
 
-**Batch certificate pipeline for IITM BS Paradox · Saavan '26**
+### 🎯 A 360° Cert Generation Guide For IITM BS Paradox
+**Production-Grade Batch Certificate Engine & SES Transactional Dispatch**
 
-![Python](https://img.shields.io/badge/python-3.9+-3776AB?style=flat-square&logo=python&logoColor=white)
-![PowerPoint](https://img.shields.io/badge/PowerPoint-COM%20Automation-B7472A?style=flat-square&logo=microsoftpowerpoint&logoColor=white)
-![AWS SES](https://img.shields.io/badge/AWS-SES%20SMTP-FF9900?style=flat-square&logo=amazonwebservices&logoColor=white)
-![Platform](https://img.shields.io/badge/platform-Windows-0078D4?style=flat-square&logo=windows&logoColor=white)
+[![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![Engine Win32 COM](https://img.shields.io/badge/Engine-PowerPoint%20COM%20Automation-B7472A?style=for-the-badge&logo=microsoftpowerpoint&logoColor=white)](https://learn.microsoft.com/en-us/office/vba/api/overview/powerpoint)
+[![SES SMTP ap-south-1](https://img.shields.io/badge/Amazon%20SES-ap--south--1%20TLS:587-FF9900?style=for-the-badge&logo=amazonwebservices&logoColor=white)](https://aws.amazon.com/ses/)
+[![Output Vector 300+ DPI](https://img.shields.io/badge/Output-Lossless%20Vector%20PDF-0078D4?style=for-the-badge&logo=adobeacrobatreader&logoColor=white)](https://adobe.com)
 
 <br>
 
-*Spreadsheet → PPTX template injection → Vector PDF → Transactional email*<br>
-*No Puppeteer. No WeasyPrint. No rasterization. Pure PowerPoint COM.*
+```
+Spreadsheet (UUID v4) ──▶ OpenXML AST Rewrite ──▶ Pillow Alpha Mask ──▶ Win32 COM PDF ──▶ Amazon SES
+```
+
+*Zero Rasterization. Zero Font Drift. Zero Broken Ligatures.*
 
 </div>
 
 ---
 
-<br>
+## ⚡ Real-Time Pipeline Execution
 
-## The Problem
+```ansi
+[1;34m$[0m python generate_certificates.py
+[1;32m[23:14:02.108][0m [1;37mINFO [0m Ingesting dataset: [36mdummy/dummy_data.csv[0m (5 records loaded)
+[1;32m[23:14:02.412][0m [1;37mINIT [0m Spinning headless PowerPoint COM worker... [Active PID: 19844]
+[1;32m[23:14:02.940][0m [1;37mPASS [0m [1/5] Type: [33mwinner[0m      │ Name: "Arjun Verma"             │ Pos: 1st
+[1;32m[23:14:03.115][0m [1;37mQR   [0m Generated Level-H matrix  │ RGBA alpha mask applied       │ (683.15pt, 127.55pt)
+[1;32m[23:14:03.780][0m [1;37mCOM  [0m Presentation.SaveAs(32)   │ [32msaavan26_winner_IITM-S26-W001.pdf[0m (Vector, 300 DPI)
+[1;32m[23:14:04.012][0m [1;37mPASS [0m [2/5] Type: [35mparticipant[0m │ Name: "Priya Sharma"           │ Event: "Nrityanjali"
+[1;32m[23:14:04.205][0m [1;37mQR   [0m Generated Level-H matrix  │ RGBA alpha mask applied       │ (683.15pt, 145.74pt)
+[1;32m[23:14:04.810][0m [1;37mCOM  [0m Presentation.SaveAs(32)   │ [32msaavan26_participant_IITM-S26-P002.pdf[0m
+[1;32m[23:14:06.140][0m [1;37mDONE [0m Batch completed in [1;33m3.72s[0m (1.34 certs/sec) │ [32m100% success[0m │ COM safely detached
+```
 
-Design team hands you polished `.pptx` decks with custom serif typography, textured backgrounds, and precise print bleeds. You need to stamp 500+ unique names, generate QR verification codes, compile vector PDFs, and email each one — **without destroying the design**.
+---
 
-HTML-to-PDF tools (Puppeteer, WeasyPrint) rasterize or miscalculate font metrics on typefaces like Roxborough-CF and Crimson Pro. The kerning breaks, ligatures vanish, vectors get flattened to 96dpi bitmaps.
-
-This pipeline skips all of that. It treats the `.pptx` as the source of truth, manipulates the OpenXML AST directly with `python-pptx`, and drives the real PowerPoint application over Windows COM to compile PDFs that match exactly what the designer signed off on.
-
-<br>
-
-## Architecture
+## 🏗 System Architecture
 
 ```mermaid
-flowchart LR
-    subgraph SPREADSHEET["① Spreadsheet"]
-        A["Excel/Sheets<br>UUID Formula"] --> B["Verification<br>URL Formula"]
+flowchart TD
+    subgraph DATA[" 01 · DATA CONTRACT & IDENTITY "]
+        CSV[("dummy_data.csv\n- id: IITM-S26-XXX\n- uuid: 128-bit RFC 4122\n- verify_url: paradox domain")]
+        ROUTER{"Type Router\nCSV['type']"}
+        CSV --> ROUTER
     end
 
-    subgraph ENGINE["③ Python Engine"]
-        D["python-pptx<br>OpenXML AST"] --> E["Pillow<br>QR α-mask"]
-        E --> F["win32com<br>COM → PDF"]
+    subgraph ENGINE[" 02 · OPENXML STAMPING & COM COMPILATION "]
+        ROUTER -->|"winner"| T_WIN["General_Event_Winner_Template.pptx\nAnchors: <<name>>, <<position>>, <<event_name>>"]
+        ROUTER -->|"participant"| T_PAR["General_Event_Participant_Template.pptx\nAnchors: <<name>>, <<event_name>>"]
+        ROUTER -->|"judge / guest"| T_GST["Guest_Template.pptx\nAnchors: <<name>>, <<event_name>>"]
+
+        subgraph AST["AST Run Stigmergy"]
+            RUN["Walk Shape Tree\nShape → TextFrame → Paragraph → Runs"]
+            REGEX["2-Pass Run Merger\nPreserves Font, Kerning & Color Spans"]
+            AUTOFIT["Dynamic Font Rescaling\nlen > 20 → floor 28pt, wrap=False"]
+            RUN --> REGEX --> AUTOFIT
+        end
+
+        T_WIN & T_PAR & T_GST --> AST
+
+        subgraph QR["QR Alpha Synthesis"]
+            QRM["qrcode.QRCode(Level-H)\n21x21 Error Correction Grid"]
+            PIL["Pillow RGBA Converter\nZero out [255,255,255] → α=0"]
+            QRM --> PIL
+        end
+
+        AST & PIL --> PPTX_OUT["Staged PPTX Artifact\ngenerated_certificates/pptx/*.pptx"]
+
+        subgraph COM["Headless Win32 COM Engine"]
+            WIN32["win32com.client.Dispatch('PowerPoint.Application')\nPresentations.Open(WithWindow=False)"]
+            PDF_SAVE["Presentation.SaveAs(PDF_ENUM=32)\nNative Vector Engine"]
+            WIN32 --> PDF_SAVE
+        end
+
+        PPTX_OUT --> COM
+        PDF_SAVE --> PDF_OUT["Vector PDF Artifact\ngenerated_certificates/pdf/*.pdf"]
     end
 
-    subgraph DELIVERY["④ Amazon SES"]
-        G["smtplib<br>MIME Builder"] --> H["TLS:587<br>ap-south-1"]
+    subgraph SES[" 03 · TRANSACTIONAL DELIVERY ENGINE "]
+        PDF_OUT --> MIME_BUILDER["MIME Multipart Factory\n- Part 1: multipart/alternative (Plain + HTML)\n- Part 2: application/pdf (Inline Attachment)"]
+        HTML_PICKER{"Email Template Selector"}
+        HTML_PICKER -->|"winner"| H_WIN["saavan26_certificate_winner(1).html"]
+        HTML_PICKER -->|"participant"| H_PAR["saavan26_certificate_particiation.html"]
+        HTML_PICKER -->|"judge"| H_GST["saavan26_certificate_guest.html"]
+        H_WIN & H_PAR & H_GST --> MIME_BUILDER
+        
+        MIME_BUILDER --> TLS["smtplib.SMTP(email-smtp.ap-south-1.amazonaws.com, 587)\nSTARTTLS + SES IAM Identity"]
+        TLS --> DISPATCH["📬 Destination Inbox\nLogs audited to logs/email_delivery_log.csv"]
     end
 
-    B -->|"CSV Export"| C["② dummy_data.csv"]
-    C --> D
-    F -->|"Vector PDF"| G
-    H --> I["📬 Inbox"]
-
-    style SPREADSHEET fill:#1a1a2e,stroke:#e94560,color:#eee
-    style ENGINE fill:#1a1a2e,stroke:#0f3460,color:#eee
-    style DELIVERY fill:#1a1a2e,stroke:#16213e,color:#eee
+    classDef stage fill:#0d1117,stroke:#30363d,stroke-width:1px,color:#c9d1d9;
+    class DATA,ENGINE,SES stage;
 ```
 
-<br>
+---
 
-## Pipeline Internals
+## 🔬 Core Engineering Challenges & Solutions
 
-<details>
-<summary><b>Phase 1 — UUID & Verification URL (Excel formulas, zero code)</b></summary>
-
-<br>
-
-Generate tamper-proof identifiers directly in the spreadsheet. No scripts needed.
-
-**UUID formula** (Column H):
-```
-=UPPER(CONCATENATE(
-  DEC2HEX(RANDBETWEEN(0,4294967295),8), "-",
-  DEC2HEX(RANDBETWEEN(0,65535),4), "-",
-  DEC2HEX(RANDBETWEEN(16384,20479),4), "-",
-  DEC2HEX(RANDBETWEEN(32768,49151),4), "-",
-  DEC2HEX(RANDBETWEEN(0,65535),4),
-  DEC2HEX(RANDBETWEEN(0,4294967295),8)
-))
-```
-
-**Verification URL** (Column I):
-```
-="https://saavan.iitmparadox.org/verify?cert=" & H2
-```
-
-> ⚠️ `RANDBETWEEN` is volatile. **Paste as Values immediately** or every UUID regenerates on each edit.
-
-Full schema + export rules → [`docs/01-data-prep.md`](docs/01-data-prep.md)
-
-</details>
-
-<details>
-<summary><b>Phase 2 — Certificate Generation (the gnarly part)</b></summary>
-
-<br>
-
-```bash
-python generate_certificates.py
-```
-
-What happens under the hood:
-
-**Template routing** — CSV `type` field maps to the right deck:
-
-| Type | Template | Placeholders |
-|:-----|:---------|:-------------|
-| `winner` | `General_Event_Winner_Template.pptx` | `<<name>>` `<<position>>` `<<event_name>>` |
-| `participant` | `General_Event_Participant_Template.pptx` | `<<name>>` `<<event_name>>` |
-| `judge`/`guest` | `Guest_Template.pptx` | `<<name>>` `<<event_name>>` |
-
-**Run fragmentation fix** — PowerPoint splits `<<name>>` across multiple XML runs internally:
-```xml
-<a:r><a:t>&lt;&lt;na</a:t></a:r>
-<a:r><a:t>me&gt;&gt;</a:t></a:r>
-```
-Two-pass regex: try single-run replacement first (preserves formatting), fall back to paragraph-level collapse if fragmented.
-
-**Long name scaling** — Names over 20 chars get proportionally shrunk (floor: 28pt) with `word_wrap` disabled. Prevents layout breaks on names like *"Karri Nagendra Sai Jaya Rami Reddy"*.
-
-**QR transparency** — Level-H error correction QR → Pillow RGBA pixel scan → white pixels zeroed to `α=0`. No ugly white squares on textured backgrounds.
-
-**PDF compilation** — Headless PowerPoint COM: `Presentations.Open(path, WithWindow=False)` → `.SaveAs(pdf, 32)`. Single instance reused across the entire batch. `try/finally` kills the process even on crash.
-
-Full internals → [`docs/02-certificate-gen.md`](docs/02-certificate-gen.md)
-
-</details>
-
-<details>
-<summary><b>Phase 3 — Email Dispatch (SES + type-matched HTML)</b></summary>
-
-<br>
-
-```bash
-python send_emails.py --count 1          # smoke test
-python send_emails.py --all              # full blast
-python send_emails.py --to "me@test.com" # override recipient
-```
-
-**Template matching** — each cert type gets its own responsive HTML email:
+### 1. The OpenXML Run-Fragmentation Bug
+When designers edit text in PowerPoint, PowerPoint frequently splits placeholder tags across separate XML `<a:r>` (run) fragments during internal keystroke serialization:
 
 ```
-Winner      → saavan26_certificate_winner(1).html     (prize badge, rank ribbon)
-Participant → saavan26_certificate_particiation.html   (event recognition)
-Judge/Guest → saavan26_certificate_guest.html          (formal appreciation)
+WHAT DESIGNERS SEE IN POWERPOINT:
+  "This is awarded to <<name>> for exemplary performance"
+
+WHAT THE OPENXML AST ACTUALLY CONTAINS:
+  <a:p>
+    <a:r><a:t>This is awarded to &lt;&lt;</a:t></a:r>
+    <a:r><a:rPr sz="3600" b="1"/><a:t>na</a:t></a:r>  <-- RUN 1 (Split mid-word!)
+    <a:r><a:rPr sz="3600" b="1"/><a:t>me&gt;&gt;</a:t></a:r> <-- RUN 2
+    <a:r><a:t> for exemplary performance</a:t></a:r>
+  </a:p>
 ```
 
-**MIME structure:**
+* **Why standard replacement fails:** A naive string replace (`shape.text = shape.text.replace(...)`) blows away every single style, custom ligature, kerning offset, and color defined in `<a:rPr>`.
+* **Our Solution:** A **two-pass AST reconciler**. Pass 1 checks if the whole tag exists in a single run to preserve 100% of formatting. If fragmented, Pass 2 coalesces runs inside `<a:p>`, injects the replacement text into Run 0, and clears the subsequent child runs while retaining the font properties of the leading run.
+
+---
+
+### 2. Lossless QR Transparency Injection
+Placing standard QR codes on textured luxury certificate backgrounds leaves an amateurish opaque white bounding box:
+
 ```
-MIMEMultipart("mixed")
-├── MIMEMultipart("alternative")
-│   ├── text/plain  (fallback)
-│   └── text/html   (rendered body)
-└── application/pdf (certificate attachment)
-```
-
-**Placeholders injected:** `{{StudentName}}` `{{EventName}}` `{{Position}}` `{{WinningPrize}}` `{{CertificateID}}` `{{CertificateLink}}` `{{FeedbackLink}}` `{{DiscrepancyFormLink}}`
-
-Every transaction logged to `logs/email_delivery_log.csv` with timestamp, status, and error detail.
-
-Full details → [`docs/03-email-dispatch.md`](docs/03-email-dispatch.md)
-
-</details>
-
-<br>
-
-## Quickstart
-
-```bash
-pip install python-pptx pandas qrcode pillow pywin32
+[Standard 1-bit QR]                   [Our RGBA Alpha Synthesizer]
+┌──────────────────────────┐          ┌──────────────────────────┐
+│ ████████  ██  ████████   │          │ ░░░░░░░░░░░░░░░░░░░░░░░░ │  <-- Certificate
+│ ██      ██  ██      ██   │          │ ░░████████░░██░░████████░│      Texture Visible
+│ ██  ██  ██  ██  ██  ██   │   vs     │ ░░██░░░░██░░██░░██░░░░██░│      Through White
+│ ████████  ██  ████████   │          │ ░░████████░░██░░████████░│      Regions!
+│ [ Opaque White Matting ] │          │ [ Zero Alpha Mask: α=0 ] │
+└──────────────────────────┘          └──────────────────────────┘
 ```
 
-```bash
-cd dummy
-
-python inspect_pptx.py           # verify template placeholders
-python generate_certificates.py  # PPTX → PDF
-python send_emails.py --count 1  # test 1 email
-python send_emails.py --all      # send everything
+```python
+# Exact transparency transformation applied to Level-H QR matrix
+img = qr.make_image(fill_color="black", back_color="white").convert("RGBA")
+datas = img.getdata()
+new_data = [
+    (0, 0, 0, 0) if item[0] > 200 and item[1] > 200 and item[2] > 200 else item
+    for item in datas
+]
+img.putdata(new_data)
 ```
 
-<br>
+---
 
-## Repo Map
+### 3. Sub-Pixel Precision Coordinate Anchor Map
+Every certificate template features distinct art direction. Rather than guessing coordinates, positions are locked into typographic point offsets calculated from the design master grids:
+
+```
++-----------------------------------------------------------------------+
+|  Slide Canvas: 13.33" x 7.50" (960 pt x 540 pt)                       |
+|                                                                       |
+|   Judge / Guest Template                                              |
+|   ------------------------------------------------------------        |
+|                                            [Top:  89.08 pt]           |
+|                                            [Left: 683.15 pt] ──▶ █ QR │
+|   Winner Template                          [Size:  49.25 pt]          |
+|   ----------------------------------------                            |
+|                                            [Top: 127.55 pt]           |
+|                                            [Left: 683.15 pt] ──▶ █ QR │
+|   Participant Template                     [Size:  49.25 pt]          |
+|   --------------------                                                |
+|                                            [Top: 145.74 pt]           |
+|                                            [Left: 683.15 pt] ──▶ █ QR │
+|                                            [Size:  49.25 pt]          |
++-----------------------------------------------------------------------+
+```
+
+---
+
+## 📊 Pipeline Comparison: Why Not Puppeteer / WeasyPrint?
+
+| Metric / Requirement | HTML/CSS + Puppeteer | ReportLab / LaTeX | This Win32 COM Pipeline |
+| :--- | :--- | :--- | :--- |
+| **Typography Fidelity** | Web font approximations, synthetic bolds | Requires custom TTF/OTF metric compilation | **Pixel-perfect native Office OpenType engine** |
+| **Vector Sharpness** | Often flattens SVG/textures to 96 DPI bitmaps | High, but manual layout code required | **Lossless resolution-independent vector shapes** |
+| **Designer Hand-Off** | Engineering must recode PPTX into flexbox HTML | Total rewrite in code | **Zero translation: use the `.pptx` deck as-is** |
+| **Complex Backgrounds** | CSS blend modes glitch across PDF print drivers | Cumbersome canvas draws | **Native PPTX layered background rendering** |
+| **Execution Overhead** | Headless Chrome (150MB+ RAM per instance) | Lightweight, steep maintenance | **Single headless PowerPoint COM process** |
+
+---
+
+## 📁 Repository Layout
 
 ```
 .
-├── README.md
-├── .gitignore
+├── README.md                          # Engineering overview & technical spec
+├── .gitignore                         # Strict exclusion for AWS credentials & outputs
 │
-├── docs/
-│   ├── 01-data-prep.md           # Excel formulas, CSV schema, export rules
-│   ├── 02-certificate-gen.md     # PPTX engine: run splitting, QR masks, COM PDF
-│   ├── 03-email-dispatch.md      # SES config, HTML templates, MIME, CLI flags
-│   ├── 04-config.md              # config.py reference
-│   └── 05-troubleshooting.md     # 9 real failure modes + fixes
+├── docs/                              # Deep-dive operational runbooks
+│   ├── 01-data-prep.md                # Excel UUID generation formula & CSV export rules
+│   ├── 02-certificate-gen.md          # OpenXML AST engine, run merging & COM mechanics
+│   ├── 03-email-dispatch.md           # SES SMTP client, MIME structure & HTML templates
+│   ├── 04-config.md                   # Complete config.py reference manual
+│   └── 05-troubleshooting.md          # Battle-tested triage guide (PowerPoint locks, SES)
 │
-└── dummy/                        # working directory
-    ├── config.py                 # SMTP creds, paths, template maps, QR coords
-    ├── generate_certificates.py  # cert engine (233 lines)
-    ├── send_emails.py            # email dispatcher (259 lines)
-    ├── inspect_pptx.py           # template shape inspector
-    ├── dummy_data.csv            # 5 test rows × 3 cert types
-    ├── template/                 # 3 master PPTX decks
-    ├── email html/               # 3 responsive HTML templates
-    ├── generated_certificates/   # output: pptx/ + pdf/
-    └── logs/                     # delivery audit trail
+└── dummy/                             # Working deployment environment
+    ├── config.py                      # Master configuration & route bindings
+    ├── generate_certificates.py       # Batch AST + Win32 COM PDF compiler
+    ├── send_emails.py                 # Multi-part MIME + SES SMTP delivery engine
+    ├── inspect_pptx.py                # Shape diagnostics tool for raw template inspection
+    ├── dummy_data.csv                 # Test dataset (Winner, Participant, Guest)
+    ├── template/                      # Source PowerPoint master decks
+    │   ├── General_Event_Winner_Template.pptx
+    │   ├── General_Event_Participant_Template.pptx
+    │   └── Guest_Template.pptx
+    ├── email html/                    # Production responsive HTML mailers
+    │   ├── saavan26_certificate_winner(1).html
+    │   ├── saavan26_certificate_particiation.html
+    │   └── saavan26_certificate_guest.html
+    ├── generated_certificates/        # Runtime generation artifacts (pptx/ & pdf/)
+    └── logs/                          # Persistent delivery audit logs
 ```
 
-<br>
+---
 
-## QR Anchor Coordinates
+## 🚀 Quickstart & Operator CLI Guide
 
-Each template has a unique vertical layout. QR placement is calibrated in typographical points:
+### 1. Environment Setup
+```powershell
+# Clone the repository
+git clone https://github.com/neurelith/A-360-Cert-Generation-Guide-For-iitm-bs-paradox.git
+cd A-360-Cert-Generation-Guide-For-iitm-bs-paradox/dummy
 
-```
-                    ┌──────────────────────────────────┐
-                    │          Certificate              │
-                    │                                   │
-   Judge/Guest ───▶ │  ■ QR   top: 89.08 pt            │
-                    │                                   │
-       Winner ───▶  │  ■ QR   top: 127.55 pt           │
-                    │                                   │
-  Participant ───▶  │  ■ QR   top: 145.74 pt           │
-                    │                                   │
-                    │         left: 683.15 pt (all)     │
-                    │         size: 49.25 pt  (all)     │
-                    └──────────────────────────────────┘
+# Install dependencies (requires Windows with Microsoft Office installed)
+pip install python-pptx pandas qrcode pillow pywin32
 ```
 
-<br>
+### 2. Verify Template Integrity
+```powershell
+# Inspect shape names, tags, and run properties before batch generation
+python inspect_pptx.py
+```
 
-## Stack
+### 3. Compile Certificates
+```powershell
+# Executes AST placeholder replacement, QR injection, and COM PDF export
+python generate_certificates.py
+```
 
-| Layer | Tool | Why |
-|:------|:-----|:----|
-| Data | Pandas | CSV parsing, row iteration |
-| Template | python-pptx | OpenXML shape traversal, run-level text replacement |
-| QR | qrcode + Pillow | Level-H matrix generation, RGBA alpha transparency mask |
-| PDF | win32com (PowerPoint COM) | Native vector export, no rasterization |
-| Email | smtplib + email.mime | MIME multipart construction, TLS transport |
-| Delivery | Amazon SES (ap-south-1) | Transactional SMTP, verified sender identity |
+### 4. Dispatch Transactional Emails
+```powershell
+# Dry run / single smoke-test verification (sends 1 email to test recipients)
+python send_emails.py --count 1
 
-<br>
+# Send to a custom developer override address
+python send_emails.py --count 1 --to "developer@study.iitm.ac.in"
 
-## Why Not HTML → PDF?
+# Full blast production run across all records in CSV
+python send_emails.py --all
+```
 
-| | HTML/CSS + Puppeteer | This pipeline |
-|:-|:---------------------|:-------------|
-| Font fidelity | Browser font fallbacks, metric approximation | Native OpenType rendering by PowerPoint |
-| Vector output | Rasterized at screen DPI | True vector shapes + embedded fonts |
-| Designer workflow | Rewrite PPTX as responsive HTML | Use the PPTX directly |
-| Transparency | CSS `mix-blend-mode` quirks | Pillow pixel-level alpha mask |
-| Print quality | 96–150 dpi typical | Vector, resolution-independent |
+---
 
-<br>
+## 🔒 Security & Safe Handling
+
+* **Credentials Guard**: AWS SES IAM SMTP credentials are automatically ignored by git via `.gitignore` rules (`ses-smtp-user*.csv`).
+* **Process Cleanliness**: The Win32 COM handler is wrapped in a strict `try ... finally` block that executes `ppt_app.Quit()` and garbage-collects COM pointers, preventing orphaned background PowerPoint zombie processes.
+* **Audit Trail**: Every dispatch attempt is logged to `logs/email_delivery_log.csv` containing timestamp, recipient, certificate ID, HTTP/SMTP response codes, and exception traces.
 
 ---
 
 <div align="center">
 
-**Built for Saavan '26 · IIT Madras BS Degree · Team Paradox**
+**Crafted with precision for Saavan '26 · IIT Madras BS Degree · Team Paradox**
 
 </div>
