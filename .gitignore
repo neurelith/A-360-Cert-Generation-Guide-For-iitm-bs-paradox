@@ -1,0 +1,18 @@
+# credentials
+ses-smtp-user*.csv
+
+# python
+__pycache__/
+*.pyc
+
+# generated output (regenerate with scripts)
+generated_certificates/
+temp_qr/
+
+# logs (created at runtime)
+logs/email_delivery_log.csv
+
+# OS junk
+Thumbs.db
+.DS_Store
+desktop.ini
