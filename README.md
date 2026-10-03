@@ -10,9 +10,10 @@
 ```
 
 ### 🎯 A 360° Cert Generation Guide For IITM BS Paradox
-**Production-Grade Batch Certificate Engine & SES Transactional Dispatch**
+**Production-Grade Batch Certificate Engine, Verification Backend & SES Transactional Dispatch**
 
 [![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![Verification Engine](https://img.shields.io/badge/Verification-Firestore%20%2B%20Turnstile-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)](https://firebase.google.com)
 [![Engine Win32 COM](https://img.shields.io/badge/Engine-PowerPoint%20COM%20Automation-B7472A?style=for-the-badge&logo=microsoftpowerpoint&logoColor=white)](https://learn.microsoft.com/en-us/office/vba/api/overview/powerpoint)
 [![SES SMTP ap-south-1](https://img.shields.io/badge/Amazon%20SES-ap--south--1%20TLS:587-FF9900?style=for-the-badge&logo=amazonwebservices&logoColor=white)](https://aws.amazon.com/ses/)
 [![Output Vector 300+ DPI](https://img.shields.io/badge/Output-Lossless%20Vector%20PDF-0078D4?style=for-the-badge&logo=adobeacrobatreader&logoColor=white)](https://adobe.com)
@@ -20,10 +21,10 @@
 <br>
 
 ```
-Spreadsheet (UUID v4) ──▶ OpenXML AST Rewrite ──▶ Pillow Alpha Mask ──▶ Win32 COM PDF ──▶ Amazon SES
+UUID v4 Formula ──▶ Pre-Flight Integrity ──▶ Firestore CVS Sync ──▶ OpenXML AST ──▶ Win32 COM PDF ──▶ Amazon SES
 ```
 
-*Zero Rasterization. Zero Font Drift. Zero Broken Ligatures.*
+*Zero Rasterization. Instant QR Verification. Zero Font Drift. Zero Broken Ligatures.*
 
 </div>
 
@@ -32,16 +33,20 @@ Spreadsheet (UUID v4) ──▶ OpenXML AST Rewrite ──▶ Pillow Alpha Mask 
 ## ⚡ Real-Time Pipeline Execution
 
 ```ansi
-[1;34m$[0m python generate_certificates.py
-[1;32m[23:14:02.108][0m [1;37mINFO [0m Ingesting dataset: [36mdummy/dummy_data.csv[0m (5 records loaded)
-[1;32m[23:14:02.412][0m [1;37mINIT [0m Spinning headless PowerPoint COM worker... [Active PID: 19844]
-[1;32m[23:14:02.940][0m [1;37mPASS [0m [1/5] Type: [33mwinner[0m      │ Name: "Arjun Verma"             │ Pos: 1st
-[1;32m[23:14:03.115][0m [1;37mQR   [0m Generated Level-H matrix  │ RGBA alpha mask applied       │ (683.15pt, 127.55pt)
-[1;32m[23:14:03.780][0m [1;37mCOM  [0m Presentation.SaveAs(32)   │ [32msaavan26_winner_IITM-S26-W001.pdf[0m (Vector, 300 DPI)
-[1;32m[23:14:04.012][0m [1;37mPASS [0m [2/5] Type: [35mparticipant[0m │ Name: "Priya Sharma"           │ Event: "Nrityanjali"
-[1;32m[23:14:04.205][0m [1;37mQR   [0m Generated Level-H matrix  │ RGBA alpha mask applied       │ (683.15pt, 145.74pt)
-[1;32m[23:14:04.810][0m [1;37mCOM  [0m Presentation.SaveAs(32)   │ [32msaavan26_participant_IITM-S26-P002.pdf[0m
-[1;32m[23:14:06.140][0m [1;37mDONE [0m Batch completed in [1;33m3.72s[0m (1.34 certs/sec) │ [32m100% success[0m │ COM safely detached
+ [1;34m$ [0m python validate_and_verify.py --csv dummy_data.csv --export-firestore firestore_payload.json
+ [1;32m[23:13:58.210] [0m  [1;37mAUDIT [0m Validating schema and RFC 4122 UUID tokens...  [32m100% PASS [0m (0 errors, 0 duplicates)
+ [1;32m[23:13:59.040] [0m  [1;37mSYNC  [0m Compiled 5 verification payloads for Firestore 'certs' collection.
+
+ [1;34m$ [0m python generate_certificates.py
+ [1;32m[23:14:02.108] [0m  [1;37mINFO  [0m Ingesting dataset:  [36mdummy/dummy_data.csv [0m (5 records loaded)
+ [1;32m[23:14:02.412] [0m  [1;37mINIT  [0m Spinning headless PowerPoint COM worker... [Active PID: 19844]
+ [1;32m[23:14:02.940] [0m  [1;37mPASS  [0m [1/5] Type:  [33mwinner [0m      │ Name: "Arjun Verma"             │ Pos: 1st
+ [1;32m[23:14:03.115] [0m  [1;37mQR    [0m Generated Level-H matrix  │ RGBA alpha mask applied       │ (683.15pt, 127.55pt)
+ [1;32m[23:14:03.780] [0m  [1;37mCOM   [0m Presentation.SaveAs(32)   │  [32msaavan26_winner_SAAVAN26-W-0001.pdf [0m (Vector, 300 DPI)
+ [1;32m[23:14:04.012] [0m  [1;37mPASS  [0m [2/5] Type:  [35mparticipant [0m │ Name: "Priya Sharma"           │ Event: "Nrityanjali"
+ [1;32m[23:14:04.205] [0m  [1;37mQR    [0m Generated Level-H matrix  │ RGBA alpha mask applied       │ (683.15pt, 145.74pt)
+ [1;32m[23:14:04.810] [0m  [1;37mCOM   [0m Presentation.SaveAs(32)   │  [32msaavan26_participant_SAAVAN26-P-0001.pdf [0m
+ [1;32m[23:14:06.140] [0m  [1;37mDONE  [0m Batch completed in  [1;33m3.72s [0m (1.34 certs/sec) │  [32m100% success [0m │ COM safely detached
 ```
 
 ---
@@ -51,12 +56,23 @@ Spreadsheet (UUID v4) ──▶ OpenXML AST Rewrite ──▶ Pillow Alpha Mask 
 ```mermaid
 flowchart TD
     subgraph DATA[" 01 · DATA CONTRACT & IDENTITY "]
-        CSV[("dummy_data.csv\n- id: IITM-S26-XXX\n- uuid: 128-bit RFC 4122\n- verify_url: paradox domain")]
-        ROUTER{"Type Router\nCSV['type']"}
-        CSV --> ROUTER
+        EXCEL["Google Sheets / Excel\n- UUID v4 Formula\n- Verification URL Formula"]
+        CSV[("dummy_data.csv\n- cert_id: SAAVAN26-W-XXXX\n- uuid: 128-bit RFC 4122\n- qr_code: saavan.iitmparadox.org")]
+        EXCEL -->|"Freeze Values & Export"| CSV
     end
 
-    subgraph ENGINE[" 02 · OPENXML STAMPING & COM COMPILATION "]
+    subgraph CVS[" 02 · VERIFICATION SYSTEM (CVS) & PRE-FLIGHT "]
+        VAL["validate_and_verify.py\n- Schema & Type Validation\n- UUID Collision Detection\n- QR Target Verification"]
+        PAYLOAD["Firestore Ingestion Payload\nKey: UPPER(UUID)\nPayload: {name, date, roll, role, season}"]
+        PORTAL["verify.iitmparadox.org\nCloudflare Turnstile Bot Defense\nFirestore 'certs' Collection"]
+        
+        CSV --> VAL --> PAYLOAD -.->|"Batch Sync (No env leaks)"| PORTAL
+    end
+
+    subgraph ENGINE[" 03 · OPENXML STAMPING & COM COMPILATION "]
+        ROUTER{"Type Router\nCSV['type']"}
+        VAL --> ROUTER
+        
         ROUTER -->|"winner"| T_WIN["General_Event_Winner_Template.pptx\nAnchors: <<name>>, <<position>>, <<event_name>>"]
         ROUTER -->|"participant"| T_PAR["General_Event_Participant_Template.pptx\nAnchors: <<name>>, <<event_name>>"]
         ROUTER -->|"judge / guest"| T_GST["Guest_Template.pptx\nAnchors: <<name>>, <<event_name>>"]
@@ -88,7 +104,7 @@ flowchart TD
         PDF_SAVE --> PDF_OUT["Vector PDF Artifact\ngenerated_certificates/pdf/*.pdf"]
     end
 
-    subgraph SES[" 03 · TRANSACTIONAL DELIVERY ENGINE "]
+    subgraph SES[" 04 · TRANSACTIONAL DELIVERY ENGINE "]
         PDF_OUT --> MIME_BUILDER["MIME Multipart Factory\n- Part 1: multipart/alternative (Plain + HTML)\n- Part 2: application/pdf (Inline Attachment)"]
         HTML_PICKER{"Email Template Selector"}
         HTML_PICKER -->|"winner"| H_WIN["saavan26_certificate_winner(1).html"]
@@ -101,8 +117,48 @@ flowchart TD
     end
 
     classDef stage fill:#0d1117,stroke:#30363d,stroke-width:1px,color:#c9d1d9;
-    class DATA,ENGINE,SES stage;
+    class DATA,CVS,ENGINE,SES stage;
 ```
+
+---
+
+## 🛡️ The Certificate Verification System (CVS)
+
+Every certificate issued by Team Paradox is backed by an online verification portal accessible via the QR code printed on the certificate.
+
+```
+[Candidate Certificate]                      [Live Verification Portal]
+┌──────────────────────────┐                ┌──────────────────────────────────────┐
+│  SAAVAN '26 CERTIFICATE  │                │ Paradox Certificate Verification     │
+│  Awarded to: Arjun Verma │                │ ──────────────────────────────────── │
+│                          │  Scan QR Code  │ [✓] Certificate Valid                │
+│             ┌─────────┐  │ ─────────────▶ │ Name:        Arjun Verma             │
+│             │  █ ▀ █  │  │   or click     │ Issued On:   May 2026                │
+│             │  █ ▄ █  │  │  Verify Link   │ Roll No:     24f2006473@ds...        │
+│             └─────────┘  │                │ Role:        Winner (1st)            │
+│                          │                │ Season:      Saavan '26              │
+└──────────────────────────┘                └──────────────────────────────────────┘
+```
+
+### 1. Verification Flow:
+1. **QR Scan**: Resolves to `https://verify.iitmparadox.org/?cert=<UUID>` (or `https://saavan.iitmparadox.org/verify?cert=<UUID>`).
+2. **Cloudflare Turnstile**: Automatically checks for bots (`sitekey: 0x4AAAAAAABFAJZHEswXheeF`).
+3. **Firestore Lookup**: Strips slashes, normalizes UUID to uppercase, and queries:
+   $$\text{Firebase Firestore} \longrightarrow \text{Collection: } \texttt{"certs"} \longrightarrow \text{Doc ID: } \texttt{UPPER(UUID)}$$
+4. **Validation Modal**:
+   - **Valid**: Displays a Teal modal confirming Name, Issued Date, Roll Number, Role, and Season.
+   - **Invalid / Tampered**: Displays a Red alert: *"The Certificate number entered is not in our records..."*
+
+### 2. Pre-Flight Validation (`validate_and_verify.py`):
+Before running COM compilation or emailing students, run the validation tool:
+```bash
+python validate_and_verify.py --csv dummy_data.csv --export-firestore firestore_payload.json
+```
+- Checks schema integrity across all 12 mandatory fields.
+- Checks UUID uniqueness (zero collisions allowed).
+- Enforces RFC 4122 v4 hexadecimal pattern.
+- Ensures the verification URL matches the candidate's UUID.
+- Exports the Firestore upload payload without leaking any secrets or `.env` files.
 
 ---
 
@@ -198,17 +254,19 @@ Every certificate template features distinct art direction. Rather than guessing
 ```
 .
 ├── README.md                          # Engineering overview & technical spec
-├── .gitignore                         # Strict exclusion for AWS credentials & outputs
+├── .gitignore                         # Strict exclusion for AWS credentials, .env & outputs
 │
 ├── docs/                              # Deep-dive operational runbooks
 │   ├── 01-data-prep.md                # Excel UUID generation formula & CSV export rules
-│   ├── 02-certificate-gen.md          # OpenXML AST engine, run merging & COM mechanics
-│   ├── 03-email-dispatch.md           # SES SMTP client, MIME structure & HTML templates
-│   ├── 04-config.md                   # Complete config.py reference manual
-│   └── 05-troubleshooting.md          # Battle-tested triage guide (PowerPoint locks, SES)
+│   ├── 02-verification-process.md     # Verification portal, Turnstile, Firestore schema & sync
+│   ├── 03-certificate-gen.md          # OpenXML AST engine, run merging & COM mechanics
+│   ├── 04-email-dispatch.md           # SES SMTP client, MIME structure & HTML templates
+│   ├── 05-config.md                   # Complete config.py reference manual
+│   └── 06-troubleshooting.md          # Battle-tested triage guide (PowerPoint locks, SES)
 │
 └── dummy/                             # Working deployment environment
     ├── config.py                      # Master configuration & route bindings
+    ├── validate_and_verify.py         # Pre-flight data validator & Firestore compiler
     ├── generate_certificates.py       # Batch AST + Win32 COM PDF compiler
     ├── send_emails.py                 # Multi-part MIME + SES SMTP delivery engine
     ├── inspect_pptx.py                # Shape diagnostics tool for raw template inspection
@@ -239,19 +297,28 @@ cd A-360-Cert-Generation-Guide-For-iitm-bs-paradox/dummy
 pip install python-pptx pandas qrcode pillow pywin32
 ```
 
-### 2. Verify Template Integrity
+### 2. Pre-Flight Integrity Audit & Verification Export
+```powershell
+# Run full sanity audit on dataset & export Firestore CVS payload
+python validate_and_verify.py --csv dummy_data.csv --export-firestore firestore_payload.json
+```
+
+### 3. Verify Template Shapes
 ```powershell
 # Inspect shape names, tags, and run properties before batch generation
 python inspect_pptx.py
 ```
 
-### 3. Compile Certificates
+### 4. Compile Certificates (PPTX → Vector PDF)
 ```powershell
 # Executes AST placeholder replacement, QR injection, and COM PDF export
 python generate_certificates.py
+
+# Reconcile that all PDFs were generated
+python validate_and_verify.py --csv dummy_data.csv --check-pdfs
 ```
 
-### 4. Dispatch Transactional Emails
+### 5. Dispatch Transactional Emails
 ```powershell
 # Dry run / single smoke-test verification (sends 1 email to test recipients)
 python send_emails.py --count 1
@@ -267,7 +334,8 @@ python send_emails.py --all
 
 ## 🔒 Security & Safe Handling
 
-* **Credentials Guard**: AWS SES IAM SMTP credentials are automatically ignored by git via `.gitignore` rules (`ses-smtp-user*.csv`).
+* **Zero Environment File Leaks**: All `.env`, `.env.*`, `*.env`, `serviceAccountKey*.json`, and `*credentials*.json` are strictly ignored by `.gitignore`. Never commit or push database admin keys or API tokens.
+* **Credentials Guard**: AWS SES IAM SMTP credentials are automatically blocked by git (`ses-smtp-user*.csv`).
 * **Process Cleanliness**: The Win32 COM handler is wrapped in a strict `try ... finally` block that executes `ppt_app.Quit()` and garbage-collects COM pointers, preventing orphaned background PowerPoint zombie processes.
 * **Audit Trail**: Every dispatch attempt is logged to `logs/email_delivery_log.csv` containing timestamp, recipient, certificate ID, HTTP/SMTP response codes, and exception traces.
 

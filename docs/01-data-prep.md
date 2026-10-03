@@ -95,3 +95,7 @@ Produces: `SAAVAN26-W-0001`, `SAAVAN26-P-0002`, `SAAVAN26-J-0003`, etc.
 3. Delete any trailing blank rows at the bottom. Pandas reads them as `NaN` entries and the generator will crash.
 4. If any field contains commas (like `"INR 5,000 Cash Prize"`), the spreadsheet should auto-wrap it in double quotes. Verify this by opening the `.csv` in a text editor.
 5. Save as `dummy_data.csv` inside `saavan26/dummy/` (or pass a custom path if using the universal generator).
+
+---
+
+Next: [Certificate Verification & Validation →](02-verification-process.md)

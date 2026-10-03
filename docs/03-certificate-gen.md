@@ -158,7 +158,7 @@ Key details:
 
 - `WithWindow=False` runs headless — no GUI window pops up.
 - We open PowerPoint once and reuse it for the entire batch. Opening/closing per file is ~10x slower.
-- The `try/finally` block ensures PowerPoint gets killed even if a file is corrupt. Without this, you get invisible `POWERPNT.EXE` zombie processes eating memory (see [troubleshooting](05-troubleshooting.md#1-zombie-powerpointexe-processes)).
+- The `try/finally` block ensures PowerPoint gets killed even if a file is corrupt. Without this, you get invisible `POWERPNT.EXE` zombie processes eating memory (see [troubleshooting](06-troubleshooting.md#1-zombie-powerpointexe-processes)).
 - `pythoncom.CoInitialize()` / `CoUninitialize()` are required on Windows for COM in Python. Skip them and you get cryptic `CoInitialize has not been called` errors.
 
 ---
@@ -189,4 +189,4 @@ Open a few PDFs and verify:
 - No leftover `<<placeholder>>` text.
 - Transparent QR — no white square on the certificate background.
 
-Then move on to [email dispatch →](03-email-dispatch.md)
+Then move on to [email dispatch →](04-email-dispatch.md)

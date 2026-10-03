@@ -1,18 +1,33 @@
+# environment & secrets
+.env
+.env.*
+*.env
+serviceAccountKey*.json
+*credentials*.json
+*.pem
+*.key
+
 # credentials
 ses-smtp-user*.csv
 
 # python
 __pycache__/
 *.pyc
+*.pyo
 
 # generated output (regenerate with scripts)
 generated_certificates/
 temp_qr/
+temp_pptx/
+*payload*.json
+firestore_*.json
 
 # logs (created at runtime)
 logs/email_delivery_log.csv
+logs/*.log
 
 # OS junk
 Thumbs.db
 .DS_Store
 desktop.ini
+
